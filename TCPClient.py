@@ -1,13 +1,16 @@
-#!/usr/local/bin/python
+#!/usr/bin/python3
 from socket import *
 serverName = 'localhost'
-serverPort = 15011
-clientSocket = socket(AF_INET, SOCK_DGRAM)
+serverPort = 12000
+clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket.connect((serverName,serverPort))
 while True:
-    message = input('Input lowercase sentences: ')
-    if (message=="quit"):
-        break
-    clientSocket.sendto(bytes(message, 'UTF-8'),(serverName, serverPort))
-    modifiedMessage, serverAddress = clientSocket.recvfrom(2048)
-    print(modifiedMessage)
-clientSocket.close()
+    sentence = input('Input lowercase sentence: ')
+    if(sentence=="quit"):
+        clientSocket.shutdown(SHUT_RDWR)
+        clientSocket.close()
+        break;
+    clientSocket.send(bytes(sentence, 'UTF-8'))
+    modifiedSentence = clientSocket.recv(1024)
+    print('From Server: ', modifiedSentence)
+
